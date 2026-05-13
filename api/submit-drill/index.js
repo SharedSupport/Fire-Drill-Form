@@ -15,6 +15,7 @@ try {
 const RECIPIENTS = [
   { email: "cstrauser@sharedsupport.org", name: "Chrissy Strauser" },
   { email: "mtreas@sharedsupport.org", name: "Michele Treas" },
+  { email: "rwilliams@sharedsupport.org", name: "R. Williams" },
 ];
 
 module.exports = async function (context, req) {
