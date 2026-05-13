@@ -1,0 +1,9 @@
+{
+  "name": "fire-drill-api",
+  "version": "1.0.0",
+  "description": "Azure Function backend for Fire Drill App",
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "@sendgrid/mail": "^8.1.0"
+  }
+}

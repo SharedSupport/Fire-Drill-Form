@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fire Drill">
+<meta name="theme-color" content="#8B1A2E">
+<title>Fire Drill — Shared Support</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap');
+  :root{
+    --maroon:#8B1A2E;--maroon-dark:#6B1323;--maroon-light:#A8304A;
+    --cream:#FDF8F4;--white:#FFFFFF;--sand:#F0E8DF;
+    --charcoal:#2D2A26;--text:#3A3632;--text-light:#7A756F;
+    --border:#DDD5CC;--success:#2E7D4F;--success-bg:#E8F5E9;
+    --warning:#C67700;--danger:#C62828;--danger-bg:#FFEBEE;
+    --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:16px;-webkit-text-size-adjust:100%}
+  body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--cream);color:var(--text);line-height:1.5;min-height:100vh;min-height:-webkit-fill-available;-webkit-tap-highlight-color:transparent}
+  .hdr{background:linear-gradient(135deg,var(--maroon),var(--maroon-dark));color:#fff;padding:16px 20px;padding-top:calc(16px + env(safe-area-inset-top,0px));position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(139,26,46,.3)}
+  .hdr-row{display:flex;align-items:center;justify-content:space-between}
+  .hdr h1{font-family:'Source Serif 4',Georgia,serif;font-size:1.25rem;font-weight:700}
+  .hdr .sub{font-size:.75rem;opacity:.8;margin-top:2px}
+  .prog-wrap{background:rgba(255,255,255,.15);height:4px;border-radius:2px;margin-top:10px;overflow:hidden}
+  .prog-fill{height:100%;background:#fff;border-radius:2px;transition:width .4s;width:0%}
+  .tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:90}
+  .tab{flex:1;padding:10px 6px;text-align:center;font-size:.7rem;font-weight:600;color:var(--text-light);border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;font-family:'DM Sans',sans-serif}
+  .tab.active{color:var(--maroon);border-bottom-color:var(--maroon);background:rgba(139,26,46,.03)}
+  .tab .ti{font-size:1.1rem;display:block;margin-bottom:1px}
+  .wrap{max-width:680px;margin:0 auto;padding:16px 16px 150px}
+  .page{display:none}.page.active{display:block}
+  .card{background:var(--white);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+  .ctitle{font-family:'Source Serif 4',Georgia,serif;font-size:1.05rem;font-weight:700;color:var(--maroon);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--sand);display:flex;align-items:center;gap:8px}
+  .ctitle .ic{width:26px;height:26px;background:var(--maroon);color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+  .f{margin-bottom:16px}.f:last-child{margin-bottom:0}
+  label{display:block;font-weight:600;font-size:.82rem;color:var(--charcoal);margin-bottom:6px}
+  label .h{font-weight:400;color:var(--text-light);font-size:.75rem;display:block;margin-top:1px}
+  label .opt{font-weight:400;color:var(--text-light);font-size:.75rem}
+  input[type="text"],input[type="date"],input[type="time"],input[type="number"],select,textarea{width:100%;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:16px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);color:var(--text);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--maroon);box-shadow:0 0 0 3px rgba(139,26,46,.12)}
+  textarea{min-height:80px;resize:vertical}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A756F' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:480px){.row{grid-template-columns:1fr}.row3{grid-template-columns:1fr}}
+  .tg{display:flex;gap:8px}
+  .tb{flex:1;padding:10px 16px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;color:var(--text);cursor:pointer;text-align:center;transition:all .2s}
+  .tb.ay{background:var(--success-bg);border-color:var(--success);color:var(--success)}
+  .tb.an{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
+  .tb.ab{background:#E3F2FD;border-color:#1976D2;color:#1976D2}
+  .cond{display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px;border-left:3px solid var(--warning)}
+  .cond.show{display:block}
+  .pl{display:flex;flex-direction:column;gap:8px}
+  .pr{display:flex;gap:8px;align-items:center}
+  .pr input{flex:1}
+  .xb{width:36px;height:36px;border-radius:8px;border:none;background:var(--danger-bg);color:var(--danger);font-size:1.2rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .ab-btn{padding:10px 16px;border:1.5px dashed var(--maroon-light);border-radius:8px;background:transparent;color:var(--maroon);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:4px}
+  .ab-btn:active{background:rgba(139,26,46,.06)}
+  .futgl{padding:14px 20px;background:var(--sand);border-radius:var(--radius);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+  .futgl span{font-weight:600;color:var(--maroon);font-size:.92rem}
+  .sw{width:48px;height:28px;background:var(--border);border-radius:14px;position:relative;transition:background .3s}
+  .sw.on{background:var(--maroon)}
+  .sw::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  .sw.on::after{transform:translateX(20px)}
+  #fu-sec{display:none}#fu-sec.show{display:block}
+  .req{color:var(--danger)}
+  .info{background:linear-gradient(135deg,rgba(139,26,46,.06),rgba(139,26,46,.02));border:1px solid rgba(139,26,46,.12);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;font-size:.82rem;line-height:1.55}
+  .info strong{color:var(--maroon)}
+  .bot{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 12px rgba(0,0,0,.08);z-index:100}
+  .bwrap{display:flex;gap:8px;max-width:680px;margin:0 auto}
+  .btn{flex:1;padding:13px 12px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:transform .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .btn:active{transform:scale(.97)}
+  .btn-p{background:linear-gradient(135deg,var(--maroon),var(--maroon-dark));color:#fff;box-shadow:0 2px 8px rgba(139,26,46,.3)}
+  .btn-s{background:var(--sand);color:var(--text);flex:none;padding:13px 18px}
+  .btn:disabled{opacity:.6;pointer-events:none}
+  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--charcoal);color:#fff;padding:12px 24px;border-radius:10px;font-size:.85rem;font-weight:500;z-index:200;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;text-align:center;max-width:90%}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{background:var(--danger)}.toast.ok{background:var(--success)}
+  .mbg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
+  .mbg.show{display:flex}
+  .modal{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:680px;padding:24px 20px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));animation:su .3s ease}
+  @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .modal h3{font-family:'Source Serif 4',Georgia,serif;font-size:1.1rem;color:var(--maroon);margin-bottom:16px}
+  .ma{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer;background:var(--white);transition:background .2s}
+  .ma:active{background:var(--cream)}
+  .ma .mi{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .ma .mt{flex:1}
+  .ma .mt strong{font-size:.9rem;display:block;color:var(--charcoal)}
+  .ma .mt span{font-size:.75rem;color:var(--text-light)}
+  .mc{width:100%;padding:14px;border:none;background:var(--sand);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);cursor:pointer;margin-top:6px}
+  .swarn{display:none;background:var(--danger-bg);border:1px solid var(--danger);border-radius:8px;padding:12px;font-size:.82rem;color:var(--danger);font-weight:600;line-height:1.5}
+  .hi{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+  .hi .ht{font-weight:700;font-size:.88rem;color:var(--charcoal)}
+  .hi .hm{font-size:.75rem;color:var(--text-light);margin-top:3px}
+  .hempty{text-align:center;padding:40px 20px;color:var(--text-light);font-size:.88rem}
+  .hempty .big{font-size:2.5rem;margin-bottom:10px}
+  .about{font-size:.82rem;color:var(--text-light);line-height:1.6}
+  .about strong{color:var(--charcoal)}
+  .about .ver{display:inline-block;background:var(--sand);padding:2px 8px;border-radius:4px;font-weight:600;font-size:.75rem;color:var(--maroon)}
+
+  /* ── Narrative preview ── */
+  .narrative-box{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:12px;font-size:.88rem;line-height:1.6;color:var(--text);white-space:pre-wrap}
+  /* ── Example page ── */
+  .ex-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--sand);align-items:flex-start}
+  .ex-row:last-child{border-bottom:none}
+  .ex-row.col{flex-direction:column;gap:4px}
+  .ex-l{font-size:.78rem;font-weight:600;color:var(--text-light);min-width:120px;flex-shrink:0}
+  .ex-v{font-size:.88rem;color:var(--charcoal);line-height:1.5}
+  .ex-v.good{background:var(--success-bg);padding:8px 12px;border-radius:6px;border-left:3px solid var(--success);color:var(--text)}
+  .narrative-label{font-size:.78rem;font-weight:600;color:var(--maroon);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .narrative-edit{margin-top:8px}
+  .narrative-edit textarea{min-height:120px;font-size:.88rem;line-height:1.6}
+</style>
+</head>
+<body>
+
+<script>
+  // ┌──────────────────────────────────────────────┐
+  // │  CONFIGURATION — Edit these before deploying  │
+  // └──────────────────────────────────────────────┘
+  const COMPLIANCE_EMAIL = 'cstrauser@sharedsupport.org,mtreas@sharedsupport.org';
+  const APP_VERSION = '2.0';
+</script>
+
+<header class="hdr">
+  <div class="hdr-row">
+    <div><h1>&#128293; Fire Drill Record</h1><div class="sub">Shared Support Inc.</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" onclick="go('form')" id="t-form"><span class="ti">&#128221;</span>Form</button>
+  <button class="tab" onclick="go('example')" id="t-example"><span class="ti">&#128214;</span>Example</button>
+  <button class="tab" onclick="go('about')" id="t-about"><span class="ti">&#9432;</span>About</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- Share Modal -->
+<div class="mbg" id="shareModal" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <h3>&#128229; Review &amp; Send Report</h3>
+    <div id="narrativePreview"></div>
+    <div class="ma" onclick="doEmail()" style="margin-top:16px">
+      <div class="mi" style="background:#E3F2FD">&#128231;</div>
+      <div class="mt"><strong>Email to Compliance</strong><span>Chrissy Strauser &amp; Michele Treas</span></div>
+    </div>
+    <button class="mc" onclick="closeM()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════ FORM PAGE ══════════ -->
+<div class="page active" id="p-form">
+<div class="wrap">
+
+  <div class="info">
+    <strong>Instructions:</strong> Select a form type below, complete all fields, and submit to generate the audit-ready PDF.
+  </div>
+
+  <!-- Form Type Selector -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128196;</div>Form Type</div>
+    <div class="tg">
+      <button type="button" class="tb ay" id="ftInitial" onclick="setFormType('initial')">&#128293; Initial Drill</button>
+      <button type="button" class="tb" id="ftFollowup" onclick="setFormType('followup')">&#128260; Follow-Up Drill</button>
+    </div>
+  </div>
+
+  <div id="initialFields"><!-- Site & Timing -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#127968;</div>Site &amp; Timing</div>
+    <div class="f"><label>Site Address <span class="req">*</span></label><input type="text" id="siteAddress" placeholder="e.g. 422 Maple Ave, Selinsgrove, PA 17870"></div>
+    <div class="row">
+      <div class="f">
+        <label>Drill Type <span class="req">*</span></label>
+        <div class="tg">
+          <button type="button" class="tb" data-f="drillType" data-v="Awake" onclick="setT(this)">Awake</button>
+          <button type="button" class="tb" data-f="drillType" data-v="Asleep" onclick="setT(this)">Asleep</button>
+        </div>
+      </div>
+      <div class="f">
+        <label>Day of Week <span class="req">*</span></label>
+        <select id="dayOfWeek"><option value="">Select...</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="f"><label>Date <span class="req">*</span></label><input type="date" id="drillDate"></div>
+      <div class="f"><label>Time Started <span class="req">*</span></label><input type="time" id="drillTime"></div>
+    </div>
+    <div class="row">
+      <div class="f"><label>Evac Time (Min)</label><input type="number" id="evacMin" min="0" max="59" placeholder="0"></div>
+      <div class="f"><label>Evac Time (Sec) <span class="req">*</span></label><input type="number" id="evacSec" min="0" max="59" placeholder="0"></div>
+    </div>
+  </div>
+
+  <!-- Drill Details -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128293;</div>Drill Details</div>
+    <div class="f"><label>Hypothetical Location of Fire <span class="req">*</span></label><input type="text" id="fireLocation" placeholder="e.g. Kitchen stove area"></div>
+    <div class="f"><label>Location of Alarm Set Off <span class="req">*</span></label><input type="text" id="alarmLocation" placeholder="e.g. Kitchen smoke detector"></div>
+    <div class="f">
+      <label>Evacuation Route <span class="req">*</span><span class="h">Where was individual when fire started? Route taken? Which door?</span></label>
+      <textarea id="evacRoute" placeholder="Describe the full evacuation path and exit door used..."></textarea>
+    </div>
+    <div class="f"><label>Designated Meeting Spot <span class="req">*</span></label><input type="text" id="meetingSpot" placeholder="e.g. Mailbox at end of driveway"></div>
+  </div>
+
+  <!-- Response -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128101;</div>Individual Response</div>
+    <div class="f">
+      <label>Response of Individuals <span class="req">*</span><span class="h">Did they exit independently? What assistance was needed?</span></label>
+      <textarea id="individualResponse" placeholder="Describe how each individual responded and any assistance provided..."></textarea>
+    </div>
+    <div class="f">
+      <label>Met at designated meeting spot? <span class="req">*</span></label>
+      <div class="tg">
+        <button type="button" class="tb" data-f="metAtSpot" data-v="Yes" onclick="setT(this)">Yes</button>
+        <button type="button" class="tb" data-f="metAtSpot" data-v="No" onclick="setT(this)">No</button>
+      </div>
+      <div class="cond" id="metAtSpot-no"><label>Explain:</label><textarea id="metAtSpotExplain" rows="2"></textarea></div>
+    </div>
+  </div>
+
+  <!-- Participants -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128203;</div>Participants</div>
+    <div class="f">
+      <label>Individuals in Drill <span class="req">*</span></label>
+      <div class="pl" id="indList"><div class="pr"><input type="text" placeholder="Individual name"><button type="button" class="xb" onclick="xr(this)">×</button></div></div>
+      <button type="button" class="ab-btn" onclick="ar('indList','Individual name')">+ Add Individual</button>
+    </div>
+    <div class="f">
+      <label>Staff in Drill <span class="req">*</span></label>
+      <div class="pl" id="stfList"><div class="pr"><input type="text" placeholder="Staff name"><button type="button" class="xb" onclick="xr(this)">×</button></div></div>
+      <button type="button" class="ab-btn" onclick="ar('stfList','Staff name')">+ Add Staff</button>
+    </div>
+    <div class="f"><label>Staff Reporting to Compliance <span class="req">*</span></label><input type="text" id="reportingStaff" placeholder="Staff name"></div>
+  </div>
+
+  <!-- Safety Checks -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#9989;</div>Safety Equipment Checks</div>
+    <div class="f">
+      <label>Any areas of concern?</label>
+      <div class="tg"><button type="button" class="tb" data-f="concerns" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="concerns" data-v="No" onclick="setT(this)">No</button></div>
+      <div class="cond" id="concerns-yes"><label>Explain:</label><textarea id="concernsExplain" rows="2"></textarea></div>
+    </div>
+    <div class="f">
+      <label>All smoke alarms operative? <span class="req">*</span></label>
+      <div class="tg"><button type="button" class="tb" data-f="smokeAlarms" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="smokeAlarms" data-v="No" onclick="setT(this)">No</button></div>
+      <div class="cond" id="smokeAlarms-no"><label>List inoperative &amp; date corrected:</label><textarea id="smokeAlarmsExplain" rows="2"></textarea></div>
+    </div>
+    <div class="f">
+      <label>All extinguishers operative? <span class="req">*</span></label>
+      <div class="tg"><button type="button" class="tb" data-f="extinguishers" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="extinguishers" data-v="No" onclick="setT(this)">No</button></div>
+      <div class="cond" id="extinguishers-no"><label>List inoperative &amp; date corrected:</label><textarea id="extinguishersExplain" rows="2"></textarea></div>
+    </div>
+    <div class="f swarn" id="safetyWarn">⚠ IF ANY FIRE SYSTEM IS INOPERABLE: Staff must do fire checks every 15 minutes until corrected. Document in Communication Log. NOTIFY SUPERVISOR IMMEDIATELY!</div>
+    <div class="f">
+      <label>Water temp below 120°F? <span class="req">*</span></label>
+      <div class="tg"><button type="button" class="tb" data-f="waterTemp" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="waterTemp" data-v="No" onclick="setT(this)">No</button></div>
+      <div class="cond" id="waterTemp-no">
+        <div class="row">
+          <div class="f"><label>Follow-up Date:</label><input type="date" id="waterFollowDate"></div>
+          <div class="f"><label>Temperature reading:</label><input type="text" id="waterFollowTemp" placeholder="e.g. 111°F"></div>
+        </div>
+      </div>
+    </div>
+    <div class="f">
+      <label>Emergency numbers posted? <span class="req">*</span></label>
+      <div class="tg"><button type="button" class="tb" data-f="emergencyNums" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="emergencyNums" data-v="No" onclick="setT(this)">No</button></div>
+      <div class="cond" id="emergencyNums-no"><label>Date corrected:</label><input type="date" id="emergencyNumsDate"></div>
+    </div>
+  </div>
+
+  <!-- Manager Evaluation (optional) -->
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128203;</div>Manager Evaluation <span style="font-size:.75rem;font-weight:400;color:var(--text-light);margin-left:4px">(Optional)</span></div>
+    <div class="f">
+      <label>Evacuation time satisfactory? <span class="opt">(optional)</span></label>
+      <div class="tg">
+        <button type="button" class="tb" data-f="evacSatisfactory" data-v="Yes" onclick="setT(this)">Yes</button>
+        <button type="button" class="tb" data-f="evacSatisfactory" data-v="No" onclick="setT(this)">No</button>
+        <button type="button" class="tb" data-f="evacSatisfactory" data-v="N/A" onclick="setT3(this)">N/A</button>
+      </div>
+    </div>
+    <div class="f">
+      <label>Emergency plan satisfactory? <span class="opt">(optional)</span></label>
+      <div class="tg">
+        <button type="button" class="tb" data-f="planSatisfactory" data-v="Yes" onclick="setT(this)">Yes</button>
+        <button type="button" class="tb" data-f="planSatisfactory" data-v="No" onclick="setT(this)">No</button>
+        <button type="button" class="tb" data-f="planSatisfactory" data-v="N/A" onclick="setT3(this)">N/A</button>
+      </div>
+    </div>
+    <div class="f">
+      <label>Overall exercise evaluation? <span class="opt">(optional)</span></label>
+      <select id="overallEval">
+        <option value="">Select...</option>
+        <option>Good</option>
+        <option>Satisfactory</option>
+        <option>Needs Improvement</option>
+        <option>Unsatisfactory</option>
+        <option>N/A</option>
+      </select>
+    </div>
+  </div>
+
+  </div><!-- /initialFields -->
+
+  <!-- ══════════ FOLLOW-UP DRILL FORM (separate) ══════════ -->
+  <div id="followupFields" style="display:none">
+    <div class="card">
+      <div class="ctitle"><div class="ic">&#127968;</div>Original Drill Reference</div>
+      <div class="f"><label>Site Address <span class="req">*</span></label><input type="text" id="fuSiteAddress" placeholder="e.g. 422 Maple Ave, Selinsgrove, PA 17870"></div>
+      <div class="f"><label>Individual(s) Name <span class="req">*</span></label>
+        <div class="pl" id="fuIndList2"><div class="pr"><input type="text" placeholder="Individual name"><button type="button" class="xb" onclick="xr(this)">×</button></div></div>
+        <button type="button" class="ab-btn" onclick="ar('fuIndList2','Individual name')">+ Add Individual</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="ic">&#128260;</div>Follow-Up Drill Details</div>
+      <div class="row">
+        <div class="f"><label>Date <span class="req">*</span></label><input type="date" id="fuDate2"></div>
+        <div class="f"><label>Time Started <span class="req">*</span></label><input type="time" id="fuTime2"></div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Day of Week <span class="req">*</span></label><select id="fuDay2"><option value="">Select...</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
+        <div class="f"><label>Drill Type <span class="req">*</span></label><div class="tg"><button type="button" class="tb" data-f="fuDrillType2" data-v="Awake" onclick="setT(this)">Awake</button><button type="button" class="tb" data-f="fuDrillType2" data-v="Asleep" onclick="setT(this)">Asleep</button></div></div>
+      </div>
+      <div class="row">
+        <div class="f"><label>Evac Time (Min)</label><input type="number" id="fuEvacMin2" min="0" max="59" placeholder="0"></div>
+        <div class="f"><label>Evac Time (Sec) <span class="req">*</span></label><input type="number" id="fuEvacSec2" min="0" max="59" placeholder="0"></div>
+      </div>
+      <div class="f"><label>Hypothetical Location of Fire <span class="req">*</span></label><input type="text" id="fuFireLocation2" placeholder="e.g. Basement utility room"></div>
+      <div class="f"><label>Location of Alarm Set Off <span class="req">*</span></label><input type="text" id="fuAlarmLocation2" placeholder="e.g. Basement hallway smoke detector"></div>
+      <div class="f"><label>Evacuation Route <span class="req">*</span><span class="h">Include which exit used</span></label><textarea id="fuEvacRoute2" placeholder="Describe the evacuation path..."></textarea></div>
+      <div class="f"><label>Designated Meeting Spot <span class="req">*</span></label><input type="text" id="fuMeetingSpot2" placeholder="e.g. Mailbox at end of driveway"></div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="ic">&#128101;</div>Individual Response</div>
+      <div class="f"><label>Response of Individuals <span class="req">*</span><span class="h">Did they exit independently? Any improvement from initial drill?</span></label><textarea id="fuIndResponse2" placeholder="Describe how each individual responded..."></textarea></div>
+      <div class="f"><label>Met at designated meeting spot? <span class="req">*</span></label>
+        <div class="tg"><button type="button" class="tb" data-f="fuMetSpot2" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="fuMetSpot2" data-v="No" onclick="setT(this)">No</button></div>
+        <div class="cond" id="fuMetSpot2-no"><label>Explain:</label><textarea id="fuMetSpot2Explain" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="ic">&#128203;</div>Participants</div>
+      <div class="f"><label>Staff in Follow-Up Drill <span class="req">*</span></label>
+        <div class="pl" id="fuStfList2"><div class="pr"><input type="text" placeholder="Staff name"><button type="button" class="xb" onclick="xr(this)">×</button></div></div>
+        <button type="button" class="ab-btn" onclick="ar('fuStfList2','Staff name')">+ Add Staff</button>
+      </div>
+      <div class="f"><label>Staff Reporting to Compliance <span class="req">*</span></label><input type="text" id="fuReportingStaff2" placeholder="Staff name"></div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="ic">&#9989;</div>Equipment Recheck</div>
+      <div class="f"><label>All smoke alarms &amp; extinguishers rechecked &amp; operative? <span class="req">*</span></label>
+        <div class="tg"><button type="button" class="tb" data-f="fuEquip2" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="fuEquip2" data-v="No" onclick="setT(this)">No</button></div>
+        <div class="cond" id="fuEquip2-no"><label>List inoperative &amp; date corrected:</label><textarea id="fuEquip2Explain" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="ic">&#128203;</div>Manager Evaluation <span style="font-size:.75rem;font-weight:400;color:var(--text-light);margin-left:4px">(Optional)</span></div>
+      <div class="f"><label>Evacuation time satisfactory? <span class="opt">(optional)</span></label><div class="tg"><button type="button" class="tb" data-f="fuEvacSat2" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="fuEvacSat2" data-v="No" onclick="setT(this)">No</button><button type="button" class="tb" data-f="fuEvacSat2" data-v="N/A" onclick="setT3(this)">N/A</button></div></div>
+      <div class="f"><label>Emergency plan satisfactory? <span class="opt">(optional)</span></label><div class="tg"><button type="button" class="tb" data-f="fuPlanSat2" data-v="Yes" onclick="setT(this)">Yes</button><button type="button" class="tb" data-f="fuPlanSat2" data-v="No" onclick="setT(this)">No</button><button type="button" class="tb" data-f="fuPlanSat2" data-v="N/A" onclick="setT3(this)">N/A</button></div></div>
+      <div class="f"><label>Overall exercise evaluation? <span class="opt">(optional)</span></label><select id="fuOverallEval2"><option value="">Select...</option><option>Good</option><option>Satisfactory</option><option>Needs Improvement</option><option>Unsatisfactory</option><option>N/A</option></select></div>
+    </div>
+  </div><!-- /followupFields -->
+
+</div></div>
+
+<!-- ══════════ EXAMPLE PAGE ══════════ -->
+<div class="page" id="p-example">
+<div class="wrap">
+  <div class="info"><strong>Example:</strong> Below is a properly completed fire drill form. The quality of the generated narrative summary depends on the detail you provide, especially in the <strong>Evacuation Route</strong> and <strong>Individual Response</strong> fields. Be specific about where each person was, what route they took, and what assistance (if any) was needed.</div>
+
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#127968;</div>Site &amp; Timing</div>
+    <div class="ex-row"><span class="ex-l">Site Address</span><span class="ex-v">422 Maple Ave, Selinsgrove, PA 17870</span></div>
+    <div class="ex-row"><span class="ex-l">Drill Type</span><span class="ex-v">Awake</span></div>
+    <div class="ex-row"><span class="ex-l">Day / Date</span><span class="ex-v">Monday, 01/12/2026</span></div>
+    <div class="ex-row"><span class="ex-l">Time Started</span><span class="ex-v">5:45 PM</span></div>
+    <div class="ex-row"><span class="ex-l">Evacuation Time</span><span class="ex-v">0 min 42 sec</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128293;</div>Drill Details</div>
+    <div class="ex-row"><span class="ex-l">Location of Fire</span><span class="ex-v">Staff room</span></div>
+    <div class="ex-row"><span class="ex-l">Alarm Set Off</span><span class="ex-v">Staff room smoke detector</span></div>
+    <div class="ex-row col"><span class="ex-l">Evacuation Route</span><span class="ex-v good">Daniel was in his living room when the alarm activated. The living room smoke detector also activated. Daniel went out of the living room to the front door to exit the home.</span></div>
+    <div class="ex-row"><span class="ex-l">Meeting Spot</span><span class="ex-v">Mailbox at end of driveway</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128101;</div>Individual Response</div>
+    <div class="ex-row col"><span class="ex-l">Response</span><span class="ex-v good">Daniel was responsive to the alarms but needed verbal prompting from his staff to help him safely and quickly evacuate to his meeting spot. He exited independently after the verbal cue.</span></div>
+    <div class="ex-row"><span class="ex-l">Met at Spot</span><span class="ex-v">Yes</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#128203;</div>Participants</div>
+    <div class="ex-row"><span class="ex-l">Individuals</span><span class="ex-v">Daniel Adams</span></div>
+    <div class="ex-row"><span class="ex-l">Staff</span><span class="ex-v">Jessica Stabler</span></div>
+    <div class="ex-row"><span class="ex-l">Reporting Staff</span><span class="ex-v">Jessica Stabler</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#9989;</div>Safety Checks</div>
+    <div class="ex-row"><span class="ex-l">Smoke Alarms</span><span class="ex-v" style="color:var(--success)">Yes</span></div>
+    <div class="ex-row"><span class="ex-l">Extinguishers</span><span class="ex-v" style="color:var(--success)">Yes</span></div>
+    <div class="ex-row"><span class="ex-l">Water Temp &lt; 120°F</span><span class="ex-v" style="color:var(--success)">Yes (111°F)</span></div>
+    <div class="ex-row"><span class="ex-l">Emergency #s Posted</span><span class="ex-v" style="color:var(--success)">Yes</span></div>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--maroon)">
+    <div class="ctitle"><div class="ic">&#128172;</div>Generated Summary Result</div>
+    <p style="font-size:.88rem;line-height:1.65;color:var(--text)">An awake fire drill was conducted on Monday with a simulated fire located in the staff room. The staff room smoke detector was activated. Daniel was in his living room when the alarm activated. The living room smoke detector also activated. Daniel went out of the living room to the front door to exit the home. Daniel was responsive to the alarms but needed verbal prompting from his staff to help him safely and quickly evacuate to his meeting spot. He exited independently after the verbal cue. Daniel met at the designated meeting spot at the mailbox at end of driveway. Total evacuation time was 0 min 42 sec.</p>
+  </div>
+
+  <div class="card" style="background:var(--cream);border:1.5px dashed var(--danger)">
+    <div class="ctitle" style="color:var(--danger)"><div class="ic" style="background:var(--danger)">&#10007;</div>What NOT To Write</div>
+    <div class="ex-row col"><span class="ex-l" style="color:var(--danger)">Evacuation Route</span><span class="ex-v" style="color:var(--danger)">Went out the front door.</span></div>
+    <div class="ex-row col"><span class="ex-l" style="color:var(--danger)">Response</span><span class="ex-v" style="color:var(--danger)">Did good.</span></div>
+    <p style="font-size:.78rem;color:var(--text-light);margin-top:12px;line-height:1.5">Vague answers like these produce a poor narrative summary. Licensors expect to see <strong>where each person was</strong>, <strong>which route they took</strong>, <strong>which exit was used</strong>, and <strong>what level of assistance was needed</strong>.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ ABOUT PAGE ══════════ -->
+<div class="page" id="p-about">
+<div class="wrap">
+  <div class="card">
+    <div class="ctitle"><div class="ic">&#9432;</div>About This App</div>
+    <div class="about">
+      <p><strong>Shared Support Fire Drill App</strong> <span class="ver">v3.0</span></p><br>
+      <p>This app generates licensing-audit-ready Fire Drill Record PDFs with auto-generated narrative summaries.</p><br>
+      <p><strong>Reports emailed to:</strong></p>
+      <p>Chrissy Strauser (cstrauser@sharedsupport.org)</p>
+      <p>Michele Treas (mtreas@sharedsupport.org)</p><br>
+      <p><strong>Tips:</strong> Tap the <strong>Example</strong> tab to see a properly completed form. Detailed answers in the Evacuation Route and Individual Response fields produce better narrative summaries.</p>
+    </div>
+  </div>
+</div></div>
+
+<!-- Bottom Bar -->
+<div class="bot">
+  <div class="bwrap">
+    <button class="btn btn-s" onclick="clearForm()">Clear</button>
+    <button class="btn btn-p" id="submitBtn" onclick="submit()">&#128231; Submit &amp; Email</button>
+  </div>
+</div>
+
+<script>
+const T={};let pdfBlob=null,pdfName='',narrative='',currentFormType='initial';
+const $=id=>document.getElementById(id);
+const lget=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}};
+const lset=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const SIG_DATA='data:image/jpeg;base64,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';
+
+function init(){$('drillDate').valueAsDate=new Date();$('drillDate').addEventListener('change',autoDay);$('fuDate2').addEventListener('change',function(){const v=this.value;if(!v)return;const d=new Date(v+'T12:00:00');$('fuDay2').value=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()]});autoDay();['evacMin','evacSec'].forEach(id=>$(id).addEventListener('input',()=>checkEvacTime('initial')));['fuEvacMin2','fuEvacSec2'].forEach(id=>$(id).addEventListener('input',()=>checkEvacTime('followup')))}
+
+function checkEvacTime(form){
+  let minId,secId,field;
+  if(form==='initial'){minId='evacMin';secId='evacSec';field='evacSatisfactory'}
+  else{minId='fuEvacMin2';secId='fuEvacSec2';field='fuEvacSat2'}
+  const mins=parseInt($(minId).value)||0;
+  const secs=parseInt($(secId).value)||0;
+  const total=mins*60+secs;
+  if(total>150){
+    T[field]='No';
+    const btns=document.querySelectorAll(`[data-f="${field}"]`);
+    btns.forEach(b=>{b.classList.remove('ay','an','ab');if(b.dataset.v==='No')b.classList.add('an')});
+  }else if(total>0&&total<=150){
+    T[field]='Yes';
+    const btns=document.querySelectorAll(`[data-f="${field}"]`);
+    btns.forEach(b=>{b.classList.remove('ay','an','ab');if(b.dataset.v==='Yes')b.classList.add('ay')});
+  }
+}
+
+function setFormType(type){currentFormType=type;$('initialFields').style.display=type==='initial'?'block':'none';$('followupFields').style.display=type==='followup'?'block':'none';$('ftInitial').className='tb'+(type==='initial'?' ay':'');$('ftFollowup').className='tb'+(type==='followup'?' ay':'');uProg()}
+
+function autoDay(){const v=$('drillDate').value;if(!v)return;const d=new Date(v+'T12:00:00');$('dayOfWeek').value=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];uProg()}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));$('p-'+id).classList.add('active');$('t-'+id).classList.add('active')}
+function setT(b){const f=b.dataset.f,v=b.dataset.v;T[f]=v;b.parentElement.querySelectorAll('.tb').forEach(x=>x.classList.remove('ay','an','ab'));b.classList.add(v==='Yes'?'ay':'an');const yb=$(f+'-yes'),nb=$(f+'-no');if(yb)yb.classList.toggle('show',v==='Yes');if(nb)nb.classList.toggle('show',v==='No');const sw=$('safetyWarn');if(sw)sw.style.display=(T.smokeAlarms==='No'||T.extinguishers==='No')?'block':'none';uProg()}
+function setT3(b){const f=b.dataset.f,v=b.dataset.v;T[f]=v;b.parentElement.querySelectorAll('.tb').forEach(x=>x.classList.remove('ay','an','ab'));b.classList.add('ab')}
+function ar(id,ph){const l=$(id),r=document.createElement('div');r.className='pr';r.innerHTML=`<input type="text" placeholder="${ph}"><button type="button" class="xb" onclick="xr(this)">×</button>`;l.appendChild(r);r.querySelector('input').focus()}
+function xr(b){const l=b.closest('.pl');if(l.children.length>1)b.parentElement.remove()}
+function gl(id){return Array.from($(id).querySelectorAll('input')).map(i=>i.value.trim()).filter(Boolean)}
+
+function uProg(){let fs;if(currentFormType==='initial'){fs=[$('siteAddress').value,T.drillType,$('dayOfWeek').value,$('drillDate').value,$('drillTime').value,$('fireLocation').value,$('alarmLocation').value,$('evacRoute').value,$('meetingSpot').value,$('individualResponse').value,T.metAtSpot,T.smokeAlarms,T.extinguishers,T.waterTemp,T.emergencyNums,$('reportingStaff').value]}else{fs=[$('fuSiteAddress').value,T.fuDrillType2,$('fuDay2').value,$('fuDate2').value,$('fuTime2').value,$('fuFireLocation2').value,$('fuAlarmLocation2').value,$('fuEvacRoute2').value,$('fuMeetingSpot2').value,$('fuIndResponse2').value,T.fuMetSpot2,T.fuEquip2,$('fuReportingStaff2').value]}const n=fs.filter(v=>v&&(typeof v==='string'?v.trim()!=='':true)).length;$('prog').style.width=Math.round((n/fs.length)*100)+'%'}
+document.addEventListener('input',uProg);document.addEventListener('change',uProg);
+function toast(m,t){const e=$('toast');e.textContent=m;e.className='toast show'+(t==='err'?' err':t==='ok'?' ok':'');setTimeout(()=>e.className='toast',3500)}
+
+function validate(){if(currentFormType==='initial'){const rq=[['siteAddress','Site Address'],['dayOfWeek','Day of Week'],['drillDate','Date'],['drillTime','Time Started'],['fireLocation','Location of Fire'],['alarmLocation','Alarm Location'],['evacRoute','Evacuation Route'],['meetingSpot','Meeting Spot'],['individualResponse','Individual Response'],['reportingStaff','Reporting Staff']];for(const[id,nm]of rq){if(!$(id).value.trim()){toast('Please fill: '+nm,'err');$(id).focus();return false}}const tr=[['drillType','Awake/Asleep'],['metAtSpot','Met at Spot'],['smokeAlarms','Smoke Alarms'],['extinguishers','Extinguishers'],['waterTemp','Water Temp'],['emergencyNums','Emergency Numbers']];for(const[k,nm]of tr){if(!T[k]){toast('Please answer: '+nm,'err');return false}}if(!gl('indList').length){toast('Add at least one individual','err');return false}if(!gl('stfList').length){toast('Add at least one staff member','err');return false}}else{const rq=[['fuSiteAddress','Site Address'],['fuDate2','Date'],['fuTime2','Time'],['fuDay2','Day of Week'],['fuFireLocation2','Location of Fire'],['fuAlarmLocation2','Alarm Location'],['fuEvacRoute2','Evacuation Route'],['fuMeetingSpot2','Meeting Spot'],['fuIndResponse2','Individual Response'],['fuReportingStaff2','Reporting Staff']];for(const[id,nm]of rq){if(!$(id).value.trim()){toast('Please fill: '+nm,'err');$(id).focus();return false}}const tr=[['fuDrillType2','Drill Type'],['fuMetSpot2','Met at Spot'],['fuEquip2','Equipment Check']];for(const[k,nm]of tr){if(!T[k]){toast('Please answer: '+nm,'err');return false}}if(!gl('fuIndList2').length){toast('Add at least one individual','err');return false}if(!gl('fuStfList2').length){toast('Add at least one staff member','err');return false}}return true}
+
+function clearForm(){if(!confirm('Clear all form data?'))return;clearFormSilent();toast('Form cleared')}
+function clearFormSilent(){const scope=currentFormType==='initial'?'#initialFields':'#followupFields';document.querySelectorAll(scope+' input,'+scope+' textarea,'+scope+' select').forEach(el=>{if(el.type==='date'||el.type==='time')el.value='';else if(el.tagName==='SELECT')el.selectedIndex=0;else el.value=''});document.querySelectorAll(scope+' .tb').forEach(b=>b.classList.remove('ay','an','ab'));document.querySelectorAll(scope+' .cond').forEach(c=>c.classList.remove('show'));if(currentFormType==='initial'){['drillType','metAtSpot','smokeAlarms','extinguishers','waterTemp','emergencyNums','concerns','evacSatisfactory','planSatisfactory'].forEach(k=>delete T[k]);['indList','stfList'].forEach(id=>{const l=$(id);while(l.children.length>1)l.removeChild(l.lastChild);l.querySelector('input').value=''});$('safetyWarn').style.display='none';$('drillDate').valueAsDate=new Date();autoDay()}else{['fuDrillType2','fuMetSpot2','fuEquip2','fuEvacSat2','fuPlanSat2'].forEach(k=>delete T[k]);['fuIndList2','fuStfList2'].forEach(id=>{const l=$(id);while(l.children.length>1)l.removeChild(l.lastChild);l.querySelector('input').value=''})}uProg()}
+
+function gatherData(){if(currentFormType==='initial'){return{formType:'initial',site:$('siteAddress').value,drillType:T.drillType,day:$('dayOfWeek').value,date:fd($('drillDate').value),time:ft($('drillTime').value),evacTime:($('evacMin').value||'0')+' min '+($('evacSec').value||'0')+' sec',fireLocation:$('fireLocation').value,alarmLocation:$('alarmLocation').value,evacRoute:$('evacRoute').value,meetingSpot:$('meetingSpot').value,individualResponse:$('individualResponse').value,metAtSpot:T.metAtSpot,metAtSpotExplain:T.metAtSpot==='No'?$('metAtSpotExplain').value:'',individuals:gl('indList'),staff:gl('stfList'),reportingStaff:$('reportingStaff').value,concerns:T.concerns||'No',concernsExplain:T.concerns==='Yes'?$('concernsExplain').value:'',smokeAlarms:T.smokeAlarms,smokeAlarmsExplain:T.smokeAlarms==='No'?$('smokeAlarmsExplain').value:'',extinguishers:T.extinguishers,extinguishersExplain:T.extinguishers==='No'?$('extinguishersExplain').value:'',waterTemp:T.waterTemp,waterReading:T.waterTemp==='No'?$('waterFollowTemp').value:'',emergencyNums:T.emergencyNums,evacSatisfactory:T.evacSatisfactory||'',planSatisfactory:T.planSatisfactory||'',overallEval:$('overallEval').value||''}}else{return{formType:'followup',site:$('fuSiteAddress').value,drillType:T.fuDrillType2,day:$('fuDay2').value,date:fd($('fuDate2').value),time:ft($('fuTime2').value),evacTime:($('fuEvacMin2').value||'0')+' min '+($('fuEvacSec2').value||'0')+' sec',fireLocation:$('fuFireLocation2').value,alarmLocation:$('fuAlarmLocation2').value,evacRoute:$('fuEvacRoute2').value,meetingSpot:$('fuMeetingSpot2').value,individualResponse:$('fuIndResponse2').value,metAtSpot:T.fuMetSpot2,metAtSpotExplain:T.fuMetSpot2==='No'?$('fuMetSpot2Explain').value:'',individuals:gl('fuIndList2'),staff:gl('fuStfList2'),reportingStaff:$('fuReportingStaff2').value,concerns:'No',concernsExplain:'',smokeAlarms:null,extinguishers:null,waterTemp:null,emergencyNums:null,fuEquip:T.fuEquip2,fuEquipExplain:T.fuEquip2==='No'?$('fuEquip2Explain').value:'',evacSatisfactory:T.fuEvacSat2||'',planSatisfactory:T.fuPlanSat2||'',overallEval:$('fuOverallEval2').value||''}}}
+
+function buildNarrative(d){const clean=s=>(s||'').trim().replace(/\.+$/,'');const lcFirst=s=>s.charAt(0).toLowerCase()+s.slice(1);function nameList(names){const f=names.map(n=>n.split(/\s+/)[0]);if(f.length===1)return f[0];if(f.length===2)return f[0]+' and '+f[1];return f.slice(0,-1).join(', ')+', and '+f[f.length-1]}const type=d.drillType.toLowerCase();const names=d.individuals;const firstNames=nameList(names);const fireLoc=clean(d.fireLocation);const alarmLoc=clean(d.alarmLocation);const route=clean(d.evacRoute);const response=clean(d.individualResponse);const meetSpot=clean(d.meetingSpot);const s=[];const prefix=d.formType==='followup'?'A follow-up ':'A';s.push(`${prefix}${type==='asleep'?'n asleep':'n awake'} fire drill was conducted on ${d.day} with a simulated fire located in the ${lcFirst(fireLoc)}.`);s.push(`The ${lcFirst(alarmLoc)} was activated.`);if(route){const sn=names.some(n=>route.toLowerCase().startsWith(n.split(/\s+/)[0].toLowerCase()));if(sn){s.push(route+'.')}else if(names.length===1){s.push(`${names[0].split(/\s+/)[0]} ${lcFirst(route)}.`)}else{s.push(route.charAt(0).toUpperCase()+route.slice(1)+'.')}}if(response){const sn=names.some(n=>response.toLowerCase().startsWith(n.split(/\s+/)[0].toLowerCase()));if(sn){s.push(response+'.')}else if(names.length===1){s.push(`${names[0].split(/\s+/)[0]} ${lcFirst(response)}.`)}else{s.push(response.charAt(0).toUpperCase()+response.slice(1)+'.')}}if(d.metAtSpot==='Yes'){s.push(`${firstNames} met at the designated meeting spot at the ${lcFirst(meetSpot)}.`)}else{let m=`${firstNames} did not meet at the designated meeting spot.`;if(d.metAtSpotExplain)m+=` ${clean(d.metAtSpotExplain)}.`;s.push(m)}s.push(`Total evacuation time was ${d.evacTime}.`);if(d.concerns==='Yes'&&d.concernsExplain){s.push(`Areas of concern were noted: ${clean(d.concernsExplain)}.`)}return s.join(' ').replace(/\.{2,}/g,'.').replace(/\s{2,}/g,' ').trim()}
+
+function submit(){if(!validate())return;const data=gatherData();narrative=buildNarrative(data);$('narrativePreview').innerHTML=`<div class="narrative-label">&#9998; Generated Summary <span style="font-weight:400;color:var(--text-light)">(edit if needed)</span></div><div class="narrative-edit"><textarea id="narrativeEdit" style="min-height:140px;font-size:.88rem;line-height:1.6">${narrative}</textarea></div>`;buildPDF(data,narrative);$('shareModal').classList.add('show')}
+
+function closeM(){$('shareModal').classList.remove('show')}
+function rebuildIfEdited(){const edited=$('narrativeEdit')?.value||narrative;if(edited!==narrative){narrative=edited;buildPDF(gatherData(),narrative)}}
+function doEmail(){rebuildIfEdited();closeM();const d=gatherData();d.narrative=narrative;d.dateRaw=currentFormType==='initial'?$('drillDate').value:$('fuDate2').value;toast('Sending report...','');$('submitBtn').disabled=true;fetch('/api/submit-drill',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>{if(!r.ok)throw new Error('Server error');return r.json()}).then(res=>{toast('Report sent to compliance!','ok');clearFormSilent();$('submitBtn').disabled=false}).catch(err=>{toast('Send failed. Trying email fallback...','err');$('submitBtn').disabled=false;const subj=encodeURIComponent(`Fire Drill Report - ${d.site} - ${d.date}${d.formType==='followup'?' (Follow-Up)':''}`);const body=encodeURIComponent(`Fire Drill Report\n\nSite: ${d.site}\nDate: ${d.date}\nType: ${d.drillType}\nIndividuals: ${d.individuals.join(', ')}\nReported by: ${d.reportingStaff}\n\nSummary:\n${narrative}\n\nPDF report is attached.\n\n- Shared Support Fire Drill App`);const file=new File([pdfBlob],pdfName,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Fire Drill Report'}).then(()=>{toast('Shared!','ok');clearFormSilent()}).catch(()=>{})}else{window.location.href=`mailto:cstrauser@sharedsupport.org,mtreas@sharedsupport.org?subject=${subj}&body=${body}`;dlPDF();toast('Email opened. Attach the downloaded PDF.')}})}
+function dlPDF(){const url=URL.createObjectURL(pdfBlob);const a=document.createElement('a');a.href=url;a.download=pdfName;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}
+
+function ft(t){if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`}
+function fd(d){if(!d)return'';const[y,m,day]=d.split('-');return`${m}/${day}/${y}`}
+
+function buildPDF(data,narr){const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'letter'});const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),LM=50,CW=W-100;let y=0,alt=false,pg=1;const MC=[139,26,46],D=[45,42,38],G=[122,117,111],LB=[253,248,244],WH=[255,255,255],GR=[46,125,79],RD=[198,40,40];function ftr(){doc.setFontSize(7.5);doc.setTextColor(...G);doc.text('Shared Support Inc. - Fire Drill Record - Generated '+new Date().toLocaleDateString(),LM,H-25);doc.text('Page '+pg,W-50,H-25,{align:'right'})}function chk(n){if(y+n>H-60){ftr();doc.addPage();pg++;y=50;alt=false}}const titleSuffix=data.formType==='followup'?' (FOLLOW-UP)':'';doc.setFillColor(...MC);doc.rect(0,0,W,70,'F');doc.setTextColor(...WH);doc.setFontSize(17);doc.setFont('helvetica','bold');doc.text('SHARED SUPPORT FIRE DRILL RECORD'+titleSuffix,LM,35);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text(`${data.site}  |  ${data.date}  |  ${data.drillType} Drill`,LM,53);y=90;function sec(t){chk(45);y+=8;doc.setFillColor(...MC);doc.roundedRect(LM,y,CW,22,3,3,'F');doc.setTextColor(...WH);doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.text(t.toUpperCase(),LM+10,y+15);y+=30;alt=false}function fld(lb,val,o={}){if(!val)val='\u2014';const lines=o.tall?doc.splitTextToSize(String(val),CW-155):[String(val)];const rh=o.tall?Math.max(20,8+lines.length*12):20;chk(rh+8);if(alt){doc.setFillColor(...LB);doc.rect(LM,y-2,CW,rh+4,'F')}alt=!alt;doc.setTextColor(...G);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(lb+':',LM+8,y+10);if(o.yn){const c=val==='Yes'?GR:val==='No'?RD:G;doc.setFillColor(...c);doc.circle(LM+148,y+8,3,'F');doc.setTextColor(...D);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(val,LM+156,y+10)}else{doc.setTextColor(...D);doc.setFontSize(9);doc.setFont('helvetica','normal');if(o.tall)lines.forEach((l,i)=>doc.text(l,LM+145,y+10+i*12));else doc.text(val,LM+145,y+10)}y+=rh+6}function ppl(lb,names){const rh=14+names.length*14;chk(rh+8);if(alt){doc.setFillColor(...LB);doc.rect(LM,y-2,CW,rh+4,'F')}alt=!alt;doc.setTextColor(...G);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(lb+':',LM+8,y+10);doc.setTextColor(...D);doc.setFontSize(9);doc.setFont('helvetica','normal');names.forEach((n,i)=>doc.text('\u2022 '+n,LM+145,y+10+i*14));y+=rh+6}
+sec(data.formType==='followup'?'Follow-Up Drill Details':'Site & Timing');fld('Site Address',data.site);fld('Drill Type',data.drillType);fld('Day / Date',data.day+', '+data.date);fld('Time Started',data.time);fld('Evacuation Time',data.evacTime);
+sec('Drill Details');fld('Location of Fire',data.fireLocation);fld('Alarm Set Off At',data.alarmLocation);fld('Evacuation Route',data.evacRoute,{tall:true});fld('Meeting Spot',data.meetingSpot);
+sec('Individual Response');fld('Response',data.individualResponse,{tall:true});fld('Met at Spot',data.metAtSpot,{yn:true});if(data.metAtSpot==='No')fld('Explanation',data.metAtSpotExplain,{tall:true});
+sec('Participants');ppl('Individuals',data.individuals);ppl('Staff',data.staff);fld('Reporting Staff',data.reportingStaff);
+if(data.formType==='initial'){sec('Safety Equipment Checks');fld('Areas of Concern',data.concerns,{yn:data.concerns!=='Yes'});if(data.concerns==='Yes')fld('Details',data.concernsExplain,{tall:true});fld('Smoke Alarms OK',data.smokeAlarms,{yn:true});if(data.smokeAlarms==='No')fld('Issues',data.smokeAlarmsExplain,{tall:true});fld('Extinguishers OK',data.extinguishers,{yn:true});if(data.extinguishers==='No')fld('Issues',data.extinguishersExplain,{tall:true});fld('Water Temp < 120\u00b0F',data.waterTemp,{yn:true});if(data.waterTemp==='No'){fld('Follow-Up Date',fd($('waterFollowDate').value));fld('Temperature',data.waterReading)}fld('Emergency #s Posted',data.emergencyNums,{yn:true});if(data.emergencyNums==='No')fld('Date Corrected',fd($('emergencyNumsDate').value))}else{sec('Equipment Recheck');fld('All Equipment Operative',data.fuEquip,{yn:true});if(data.fuEquip==='No')fld('Issues',data.fuEquipExplain,{tall:true})}
+if(data.evacSatisfactory||data.planSatisfactory||data.overallEval){sec('Manager Evaluation');if(data.evacSatisfactory)fld('Evacuation Time Satisfactory',data.evacSatisfactory,{yn:data.evacSatisfactory!=='N/A'});if(data.planSatisfactory)fld('Emergency Plan Satisfactory',data.planSatisfactory,{yn:data.planSatisfactory!=='N/A'});if(data.overallEval)fld('Overall Evaluation',data.overallEval)}
+sec('Comments / Narrative Summary');const narrLines=doc.splitTextToSize(narr,CW-20);const narrH=narrLines.length*13+20;chk(narrH+10);doc.setFillColor(248,245,240);doc.roundedRect(LM,y,CW,narrH,4,4,'F');doc.setDrawColor(221,213,204);doc.roundedRect(LM,y,CW,narrH,4,4,'S');doc.setTextColor(...D);doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.text(narrLines,LM+10,y+14);y+=narrH+10;
+// Signature
+const sigH=90;chk(sigH+20);y+=10;doc.setFillColor(240,232,223);doc.rect(LM,y,CW,20,'F');doc.setDrawColor(...MC);doc.setLineWidth(0.5);doc.rect(LM,y,CW,20,'S');doc.setTextColor(...D);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('Name',LM+10,y+13);doc.text('Signature',LM+180,y+13);doc.text('Date',LM+380,y+13);y+=20;doc.rect(LM,y,CW,55,'S');doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...D);doc.text('Michele Treas',LM+10,y+22);doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(...G);doc.text('(Compliance Specialist)',LM+10,y+35);try{doc.addImage(SIG_DATA,'JPEG',LM+180,y+8,120,38)}catch(e){}doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...G);doc.text('___/___/______',LM+385,y+28);y+=55;
+ftr();const site=data.site.replace(/[^a-zA-Z0-9]/g,'_').substring(0,30);const dt=currentFormType==='initial'?$('drillDate').value:$('fuDate2').value;const fuTag=data.formType==='followup'?'_followup':'';pdfName=`FireDrill_${site}_${data.drillType.toLowerCase()}${fuTag}_${dt}.pdf`;pdfBlob=doc.output('blob')}
+
+init();
+</script>
+</body>
+</html>
