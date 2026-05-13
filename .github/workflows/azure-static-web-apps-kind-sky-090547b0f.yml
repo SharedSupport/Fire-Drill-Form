@@ -3,10 +3,12 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
+      - main
       - claude/fire-drill-form-azure-GK0VM
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
+      - main
       - claude/fire-drill-form-azure-GK0VM
 
 jobs:
