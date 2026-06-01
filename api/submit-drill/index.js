@@ -334,9 +334,9 @@ function buildPDF(data, narr) {
     if (data.extinguishers === "No")
       fld("Issues", data.extinguishersExplain, { tall: true });
     fld("Water Temp < 120\u00b0F", data.waterTemp, { yn: true });
+    if (data.waterActualTemp) fld("Actual Temp Reading", data.waterActualTemp);
     if (data.waterTemp === "No") {
       fld("Follow-Up Date", data.waterFollowDate || "");
-      fld("Temperature", data.waterReading || "");
     }
     fld("Emergency #s Posted", data.emergencyNums, { yn: true });
     if (data.emergencyNums === "No")
