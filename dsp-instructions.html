@@ -11,13 +11,12 @@
   header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #8b1a2e; padding-bottom: 10px; margin-bottom: 18px; }
   header h1 { font-size: 16pt; color: #8b1a2e; line-height: 1.2; }
   header p { font-size: 9pt; color: #7a756f; margin-top: 3px; }
-  .logo-box { text-align: right; font-size: 8pt; color: #7a756f; }
+  .header-right { text-align: right; }
+  .header-right img { width: 80px; height: 80px; border-radius: 14px; display: block; margin-bottom: 4px; }
+  .header-right span { font-size: 8pt; color: #7a756f; }
 
   h2 { font-size: 12pt; color: #fff; background: #8b1a2e; padding: 5px 10px; border-radius: 4px; margin: 18px 0 8px; }
   h3 { font-size: 10.5pt; color: #8b1a2e; margin: 12px 0 4px; }
-
-  .url-box { background: #fdf8f4; border: 1.5px solid #8b1a2e; border-radius: 5px; padding: 10px 14px; margin: 10px 0 14px; font-size: 11pt; }
-  .url-box span { font-weight: bold; color: #8b1a2e; word-break: break-all; }
 
   ol, ul { margin-left: 18px; }
   li { margin-bottom: 5px; line-height: 1.45; }
@@ -36,7 +35,6 @@
   .field-table tr:nth-child(even) td { background: #fdf8f4; }
 
   .badge { display: inline-block; background: #8b1a2e; color: #fff; border-radius: 3px; font-size: 8.5pt; padding: 1px 6px; font-weight: bold; margin-right: 4px; }
-  .badge.green { background: #2e7d4f; }
 
   footer { margin-top: 24px; border-top: 1px solid #ddd5cc; padding-top: 8px; font-size: 8.5pt; color: #7a756f; display: flex; justify-content: space-between; }
 
@@ -54,18 +52,14 @@
     <h1>Fire Drill Verification Form<br>Staff Instructions</h1>
     <p>Shared Support Inc. &nbsp;|&nbsp; Direct Support Professional Guide</p>
   </div>
-  <div class="logo-box">Shared Support Inc.<br>Fire Safety Compliance</div>
+  <div class="header-right">
+    <img src="fire-drill-icon.png" alt="Fire Drills app icon">
+    <span>Tap this icon on your iPad</span>
+  </div>
 </header>
 
-<h2>Accessing the Form</h2>
-<p>Open the <strong>Fire Drills</strong> app on your iPad (pinned to the home screen via Intune), or go to:</p>
-<div class="url-box">
-  <span>https://kind-sky-090547b0f.7.azurestaticapps.net</span>
-</div>
-<div class="tip">The form works best on your Shared Support iPad. No login is required. The page opens directly to the form.</div>
-
 <h2>Choosing the Right Form Type</h2>
-<p>When the page loads, tap the form type that applies:</p>
+<p>Open the <strong>Fire Drills</strong> app on your iPad (tap the icon shown above). When the page loads, tap the form type that applies:</p>
 <div class="step-grid">
   <div class="step-box">
     <h3><span class="badge">Initial Drill</span></h3>
@@ -73,24 +67,24 @@
   </div>
   <div class="step-box">
     <h3><span class="badge">Follow-Up Drill</span></h3>
-    <p>Use when a <strong>previous drill had issues</strong> that required follow-up. Skips most safety checks — only asks whether all equipment is now operative.</p>
+    <p>Use when a <strong>previous drill had issues</strong> that required follow-up. Skips most safety checks and only asks whether all equipment is now operative.</p>
   </div>
 </div>
 
 <h2>Completing the Initial Drill Form</h2>
 
-<h3>Section 1 – Site &amp; Timing</h3>
+<h3>Section 1: Site and Timing</h3>
 <table class="field-table">
   <tr><th>Field</th><th>What to Enter</th></tr>
   <tr><td><strong>Site Address</strong></td><td>Full address of the home where the drill was conducted</td></tr>
-  <tr><td><strong>Drill Type</strong></td><td>Tap <em>Awake</em> or <em>Asleep</em> — whether individuals were awake or asleep when the drill began</td></tr>
+  <tr><td><strong>Drill Type</strong></td><td>Tap <em>Awake</em> or <em>Asleep</em> to indicate whether individuals were awake or asleep when the drill began</td></tr>
   <tr><td><strong>Day of Week</strong></td><td>Select the day from the dropdown</td></tr>
   <tr><td><strong>Date</strong></td><td>Tap the date field and select today's date (or the date the drill occurred)</td></tr>
   <tr><td><strong>Time Started</strong></td><td>Enter the time the drill began (hour and minute)</td></tr>
   <tr><td><strong>Evacuation Time</strong></td><td>Enter how many minutes and seconds it took everyone to exit</td></tr>
 </table>
 
-<h3>Section 2 – Drill Details</h3>
+<h3>Section 2: Drill Details</h3>
 <table class="field-table">
   <tr><th>Field</th><th>What to Enter</th></tr>
   <tr><td><strong>Location of Simulated Fire</strong></td><td>Where the fire was pretended to be (e.g., "kitchen stove")</td></tr>
@@ -99,36 +93,36 @@
   <tr><td><strong>Meeting Spot</strong></td><td>Where everyone gathered outside (e.g., "end of driveway")</td></tr>
 </table>
 
-<h3>Section 3 – Individual Response</h3>
+<h3>Section 3: Individual Response</h3>
 <table class="field-table">
   <tr><th>Field</th><th>What to Enter</th></tr>
   <tr><td><strong>Individual Response</strong></td><td>Describe how the individual(s) responded during the drill (e.g., "walked calmly to exit with verbal prompts")</td></tr>
   <tr><td><strong>Met at Designated Spot?</strong></td><td>Tap <em>Yes</em> or <em>No</em>. If No, explain why in the box that appears.</td></tr>
 </table>
 
-<h3>Section 4 – Participants</h3>
+<h3>Section 4: Participants</h3>
 <ol>
   <li>Under <strong>Individuals</strong>, type each person's full name and tap <strong>Add</strong>. Add all individuals who participated.</li>
   <li>Under <strong>Staff Present</strong>, add each staff member's name the same way.</li>
   <li>In <strong>Reporting Staff</strong>, type your own full name.</li>
 </ol>
 
-<h3>Section 5 – Safety Equipment Checks</h3>
+<h3>Section 5: Safety Equipment Checks</h3>
 <table class="field-table">
   <tr><th>Field</th><th>What to Enter</th></tr>
   <tr><td><strong>Areas of Concern</strong></td><td>Tap <em>Yes</em> if anything needs attention, then describe. Tap <em>No</em> if all was fine.</td></tr>
   <tr><td><strong>Smoke Alarms OK</strong></td><td>Tap <em>Yes</em> or <em>No</em>. If No, describe the issue.</td></tr>
   <tr><td><strong>Extinguishers OK</strong></td><td>Tap <em>Yes</em> or <em>No</em>. If No, describe the issue.</td></tr>
-  <tr><td><strong>Water Temp Below 120°F?</strong></td><td>Tap <em>Yes</em> or <em>No</em>. If No, enter a follow-up date.</td></tr>
-  <tr><td><strong>Actual Water Temperature</strong></td><td>Enter the temperature reading from the tap (e.g., <em>112°F</em>). Always fill this in.</td></tr>
+  <tr><td><strong>Water Temp Below 120 degrees F?</strong></td><td>Tap <em>Yes</em> or <em>No</em>. If No, enter a follow-up date.</td></tr>
+  <tr><td><strong>Actual Water Temperature</strong></td><td>Enter the temperature reading from the tap (e.g., <em>112 degrees F</em>). Always fill this in.</td></tr>
   <tr><td><strong>Emergency Numbers Posted?</strong></td><td>Tap <em>Yes</em> or <em>No</em>. If No, enter the date it was corrected.</td></tr>
 </table>
 
-<h3>Section 6 – Manager Evaluation (if applicable)</h3>
+<h3>Section 6: Manager Evaluation (if applicable)</h3>
 <p>If a manager was present, they may complete the evacuation time evaluation, emergency plan evaluation, and overall rating. If not applicable, leave blank.</p>
 
 <h2>Completing the Follow-Up Drill Form</h2>
-<p>The Follow-Up form is shorter. Fill in all the same <strong>Site &amp; Timing</strong>, <strong>Drill Details</strong>, <strong>Individual Response</strong>, and <strong>Participants</strong> sections as above. The only difference is the equipment section:</p>
+<p>The Follow-Up form is shorter. Fill in all the same <strong>Site and Timing</strong>, <strong>Drill Details</strong>, <strong>Individual Response</strong>, and <strong>Participants</strong> sections as above. The only difference is the equipment section:</p>
 <ul>
   <li>Tap <em>Yes</em> or <em>No</em> for <strong>All Equipment Now Operative</strong>.</li>
   <li>If No, describe the remaining issues in the box that appears.</li>
@@ -136,8 +130,8 @@
 
 <h2>Submitting the Form</h2>
 <ol>
-  <li>Review your entries — scroll through to make sure nothing is blank.</li>
-  <li>Tap the <strong>Submit &amp; Send Report</strong> button at the bottom.</li>
+  <li>Review your entries and scroll through to make sure nothing is blank.</li>
+  <li>Tap the <strong>Submit and Send Report</strong> button at the bottom.</li>
   <li>A confirmation message will appear. The report is automatically emailed as a PDF to the compliance team.</li>
 </ol>
 
@@ -146,14 +140,14 @@
 
 <h2>Frequently Asked Questions</h2>
 <ul>
-  <li><strong>What if I made a mistake after submitting?</strong> Contact Michele Treas or Chrissy Strauser and let them know — they will receive the report and can note the correction.</li>
-  <li><strong>What if the app won't load?</strong> Check that the iPad has internet access. If the problem continues, contact your supervisor.</li>
-  <li><strong>Do I need to fill out a paper form too?</strong> No — this form replaces the paper process. The PDF is kept on file automatically.</li>
-  <li><strong>What if an individual wasn't home during the drill?</strong> Only list individuals who were present. Note any absences in the narrative/response field if needed.</li>
+  <li><strong>What if I made a mistake after submitting?</strong> Contact Michele Treas or Chrissy Strauser and let them know. They will receive the report and can note the correction.</li>
+  <li><strong>What if the app will not load?</strong> Check that the iPad has internet access. If the problem continues, contact your supervisor.</li>
+  <li><strong>Do I need to fill out a paper form too?</strong> No. This form replaces the paper process. The PDF is kept on file automatically.</li>
+  <li><strong>What if an individual was not home during the drill?</strong> Only list individuals who were present. Note any absences in the narrative/response field if needed.</li>
 </ul>
 
 <footer>
-  <span>Shared Support Inc. &nbsp;|&nbsp; Fire Drill Verification Form – Staff Guide</span>
+  <span>Shared Support Inc. Fire Drill Verification Form Staff Guide</span>
   <span>Questions? Contact mtreas@sharedsupport.org</span>
 </footer>
 
