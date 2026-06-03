@@ -153,6 +153,10 @@ function buildNarrative(d) {
 
   s.push(`Total evacuation time was ${d.evacTime}.`);
 
+  if (d.exitType) {
+    s.push(`The ${d.exitType.toLowerCase()} exit was used${d.secondaryDoor ? " (" + d.secondaryDoor + ")" : ""}.`);
+  }
+
   if (d.concerns === "Yes" && d.concernsExplain) {
     s.push(`Areas of concern were noted: ${clean(d.concernsExplain)}.`);
   }
@@ -308,6 +312,8 @@ function buildPDF(data, narr) {
   fld("Alarm Set Off At", data.alarmLocation);
   fld("Evacuation Route", data.evacRoute, { tall: true });
   fld("Meeting Spot", data.meetingSpot);
+  fld("Exit Used", data.exitType);
+  if (data.secondaryDoor) fld("Secondary Exit Door", data.secondaryDoor);
 
   sec("Individual Response");
   fld("Response", data.individualResponse, { tall: true });
@@ -348,17 +354,14 @@ function buildPDF(data, narr) {
       fld("Issues", data.fuEquipExplain, { tall: true });
   }
 
-  if (data.evacSatisfactory || data.planSatisfactory || data.overallEval) {
+  if (data.evacSatisfactory || data.overallEval || data.overallEvalNotes) {
     sec("Manager Evaluation");
     if (data.evacSatisfactory)
       fld("Evacuation Time Satisfactory", data.evacSatisfactory, {
         yn: data.evacSatisfactory !== "N/A",
       });
-    if (data.planSatisfactory)
-      fld("Emergency Plan Satisfactory", data.planSatisfactory, {
-        yn: data.planSatisfactory !== "N/A",
-      });
     if (data.overallEval) fld("Overall Evaluation", data.overallEval);
+    if (data.overallEvalNotes) fld("Evaluation Notes", data.overallEvalNotes, { tall: true });
   }
 
   // Narrative
